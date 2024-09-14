@@ -23,6 +23,9 @@ public class Producto {
         this.rubro = rubro;
     }
 
+    
+    
+
     public long getCodigo() {
         return codigo;
     }
