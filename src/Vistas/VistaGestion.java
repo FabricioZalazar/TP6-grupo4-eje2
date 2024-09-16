@@ -5,8 +5,14 @@
 package Vistas;
 
 import Entidades.Producto;
+import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
+import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -15,8 +21,11 @@ import javax.swing.table.DefaultTableModel;
  */
 public class VistaGestion extends javax.swing.JInternalFrame {
 
+    Set<String> categorias = new HashSet<>();
     ArrayList<Producto> productos = new ArrayList();
     DefaultTableModel modelo = new DefaultTableModel();
+    private TreeMap<Long, Producto> Product = new TreeMap();
+    private String product;
 
     public boolean isCellEditable(int fila, int columna) {
         return false;
@@ -29,7 +38,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
         initComponents();
         ArmarCabecera();
-
+        DesactivarCampo();
     }
 
     /**
@@ -72,6 +81,12 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
         jLCategoria.setText("Filtrar por Categoria:");
 
+        jCCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCCategoriaActionPerformed(evt);
+            }
+        });
+
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -97,6 +112,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
         jLStock.setText("Stock:");
 
+        jCRubro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Comestible", "Limpieza", "Perfumeria" }));
         jCRubro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCRubroActionPerformed(evt);
@@ -298,7 +314,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
         txtPrecio.setText("");
         jCRubro.setSelectedItem(0);
         jSStock.setValue(0);
-
+        DesactivarCampo();
 
     }//GEN-LAST:event_jBActualizarActionPerformed
 
@@ -307,6 +323,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jBCerrarActionPerformed
 
     private void jBNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNuevoActionPerformed
+        ActivarCampo();
 
     }//GEN-LAST:event_jBNuevoActionPerformed
 
@@ -315,26 +332,38 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jCRubroActionPerformed
 
     private void jBGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBGuardarActionPerformed
-        
-            long codigo = Long.parseLong(txtCodigo.getText());
-            String descripcion = txtDescripcion.getText();
-            int precio = Integer.parseInt(txtPrecio.getText());
-            String rubro = jCRubro.getActionCommand();
-            int stock = (Integer) jSStock.getValue();
-            Producto producto = new Producto(codigo, descripcion, precio,stock, rubro);
-            productos.add(producto);
-            modelo.setRowCount(0);
-            for (Producto p : productos) {
-                modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getPrecio(), p.getRubro(), p.getStock()});
+        if (ValidarCamposVacios(jDesktopPane1)) {
+            try {
                 
+                long codigo = Long.parseLong(txtCodigo.getText());
+                String descripcion = txtDescripcion.getText();
+                int precio = Integer.parseInt(txtPrecio.getText());
+                String rubro = (String) jCRubro.getSelectedItem();
+                int stock = (Integer) jSStock.getValue();
+               
+                if (Product.containsKey(codigo)) {
+                JOptionPane.showMessageDialog(this, "El código de producto ya existe. Por favor, use un código diferente.");
+                      
+                 return;
+                }
+                Producto producto = new Producto(codigo, descripcion, precio, rubro, stock);
+                Product.putIfAbsent(codigo, producto);
 
-            
-            
-            
+                
+                LlenarCombo();
+
+
+                modelo.setRowCount(0);
+                for (Producto p : Product.values()) {
+                    modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+                }
+
+            } catch (NumberFormatException r) {
+                JOptionPane.showMessageDialog(this, "complete los campos", "Error", HEIGHT);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Complete los Campos", "Error", HEIGHT);
         }
-
-        
-// TODO add your handling code here:
     }//GEN-LAST:event_jBGuardarActionPerformed
 
     private void jBEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBEliminarActionPerformed
@@ -342,12 +371,16 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
         if (filaSeleccionada != -1) {  // VERIFICO QUE UNA FILA ESTE SELCCIONADA
             // OBTENGO EL TELEFONO DE LA FILA
-         modelo.removeRow(filaSeleccionada);
+            modelo.removeRow(filaSeleccionada);
 
         } else {
             JOptionPane.showMessageDialog(this, "No se seleccionó ninguna fila.");
         }
     }//GEN-LAST:event_jBEliminarActionPerformed
+
+    private void jCCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCCategoriaActionPerformed
+        jTable1.removeAll();
+    }//GEN-LAST:event_jCCategoriaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -385,4 +418,52 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
     }
 
+    private void DesactivarCampo() {
+        txtPrecio.setEnabled(false);
+        txtCodigo.setEnabled(false);
+        txtDescripcion.setEnabled(false);
+        jCRubro.setEnabled(false);
+        jSStock.setEnabled(false);
+    }
+
+    private void ActivarCampo() {
+        txtPrecio.setEnabled(true);
+        txtCodigo.setEnabled(true);
+        txtDescripcion.setEnabled(true);
+        jCRubro.setEnabled(true);
+        jSStock.setEnabled(true);
+    }
+
+    public boolean ValidarCamposVacios(JDesktopPane jDesktopPane1) {
+        boolean bandera = true;
+        for (int i = 0; i < jDesktopPane1.getComponents().length; i++) {
+            if (!bandera) {
+                break;
+            }
+            if (jDesktopPane1.getComponents()[i] instanceof JTextField) {
+                bandera = !((JTextField) jDesktopPane1.getComponents()[i]).getText().equals("") ? true : false;
+                jDesktopPane1.getComponents()[i].requestFocus();
+            }
+        }
+        return bandera;
+    }
+
+    public void LlenarCombo() {
+        jCCategoria.removeAllItems();
+
+        for (Producto producto : Product.values()) {
+            categorias.add(producto.getRubro());
+        }
+        for (String categoria : categorias) {
+            jCCategoria.addItem(categoria);
+        }
+    }
+
+    private void actualizarCategorias() {
+
+        Set<String> categorias = new HashSet<>();
+        for (Producto producto : Product.values()) {
+            categorias.add(producto.getRubro());
+        }
+    }
 }

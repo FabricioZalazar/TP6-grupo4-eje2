@@ -4,6 +4,8 @@
  */
 package Entidades;
 
+import java.util.TreeMap;
+
 /**
  *
  * @author zalaz
@@ -14,8 +16,13 @@ public class Producto {
     private double precio;
     private int stock;
     private String rubro;
-
-    public Producto(long codigo, String descripcion, double precio, int stock, String rubro) {
+    private TreeMap<Long, Producto> Product = new TreeMap();
+    
+    
+    
+    
+    public Producto(long codigo, String descripcion, double precio, String rubro, int stock) {
+        
         this.codigo = codigo;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -66,5 +73,9 @@ public class Producto {
         this.rubro = rubro;
     }
     
-    
+    public void agregarProducto(long codigo, Producto producto) {
+        Product.putIfAbsent(codigo, producto);
+        
+        
+    }
 }
