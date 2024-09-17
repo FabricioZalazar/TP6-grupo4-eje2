@@ -334,24 +334,24 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     private void jBGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBGuardarActionPerformed
         if (ValidarCamposVacios(jDesktopPane1)) {
             try {
-                
+
                 long codigo = Long.parseLong(txtCodigo.getText());
                 String descripcion = txtDescripcion.getText();
                 int precio = Integer.parseInt(txtPrecio.getText());
                 String rubro = (String) jCRubro.getSelectedItem();
                 int stock = (Integer) jSStock.getValue();
-               
+
                 if (Product.containsKey(codigo)) {
-                JOptionPane.showMessageDialog(this, "El código de producto ya existe. Por favor, use un código diferente.");
-                      
-                 return;
+                    JOptionPane.showMessageDialog(this, "El código de producto ya existe. Por favor, use un código diferente.");
+
+                    return;
                 }
                 Producto producto = new Producto(codigo, descripcion, precio, rubro, stock);
                 Product.putIfAbsent(codigo, producto);
 
-                
                 LlenarCombo();
-
+                String categoriaSeleccionada = (String) jCCategoria.getSelectedItem();
+              
 
                 modelo.setRowCount(0);
                 for (Producto p : Product.values()) {
@@ -369,8 +369,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     private void jBEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBEliminarActionPerformed
         int filaSeleccionada = jTable1.getSelectedRow();  // OBTENGO LA FILA
 
-        if (filaSeleccionada != -1) {  // VERIFICO QUE UNA FILA ESTE SELCCIONADA
-            // OBTENGO EL TELEFONO DE LA FILA
+        if (filaSeleccionada != -1) {
             modelo.removeRow(filaSeleccionada);
 
         } else {
@@ -379,7 +378,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jBEliminarActionPerformed
 
     private void jCCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCCategoriaActionPerformed
-        jTable1.removeAll();
+       
     }//GEN-LAST:event_jCCategoriaActionPerformed
 
 
@@ -466,4 +465,5 @@ public class VistaGestion extends javax.swing.JInternalFrame {
             categorias.add(producto.getRubro());
         }
     }
+
 }
