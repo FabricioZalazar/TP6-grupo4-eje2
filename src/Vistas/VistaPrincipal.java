@@ -114,7 +114,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mitConsultaNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaNombreActionPerformed
-        // TODO add your handling code here:
+       escritorio.repaint();
+        VistaBuscarPorNombre a1 = new VistaBuscarPorNombre();
+        a1.setVisible(true);
+        escritorio.add(a1);
+        escritorio.moveToFront(a1);
     }//GEN-LAST:event_mitConsultaNombreActionPerformed
 
     private void mitConsultaPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaPrecioActionPerformed

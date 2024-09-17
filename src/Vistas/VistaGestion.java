@@ -23,13 +23,14 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
     Set<String> categorias = new HashSet<>();
     ArrayList<Producto> productos = new ArrayList();
-    DefaultTableModel modelo = new DefaultTableModel();
-    private TreeMap<Long, Producto> Product = new TreeMap();
-    private String product;
 
-    public boolean isCellEditable(int fila, int columna) {
-        return false;
-    }
+     static TreeMap<Long, Producto> Product = new TreeMap();
+    private String product;
+    DefaultTableModel modelo = new DefaultTableModel() {
+        public boolean isCellEditable(int fila, int columna) {
+            return false;
+        }
+    };
 
     /**
      * Creates new form VistaGestion
@@ -351,7 +352,6 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
                 LlenarCombo();
                 String categoriaSeleccionada = (String) jCCategoria.getSelectedItem();
-              
 
                 modelo.setRowCount(0);
                 for (Producto p : Product.values()) {
@@ -378,7 +378,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jBEliminarActionPerformed
 
     private void jCCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCCategoriaActionPerformed
-       
+
     }//GEN-LAST:event_jCCategoriaActionPerformed
 
 
