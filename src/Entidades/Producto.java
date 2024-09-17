@@ -16,7 +16,7 @@ public class Producto {
     private double precio;
     private int stock;
     private String rubro;
-    private TreeMap<Long, Producto> Product = new TreeMap();
+
     
     
     
@@ -73,15 +73,18 @@ public class Producto {
         this.rubro = rubro;
     }
     
-    public void agregarProducto(long codigo, Producto producto) {
-        Product.putIfAbsent(codigo, producto);
-        
-        
+   
+    public void actualizar(long codigo,String descripcion, double precio, String rubro, int stock) {
+        this.codigo = codigo;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.stock = stock;
+        this.rubro = rubro;
     }
-
+    
     @Override
     public String toString() {
-        return "Producto{" + "codigo=" + codigo + ", descripcion=" + descripcion + ", precio=" + precio + ", stock=" + stock + ", rubro=" + rubro + ", Product=" + Product + '}';
+        return "Producto{" + "codigo=" + codigo + ", descripcion=" + descripcion + ", precio=" + precio + ", stock=" + stock + ", rubro=" + rubro +  '}';
     }
     
 }

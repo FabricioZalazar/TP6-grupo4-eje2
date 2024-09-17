@@ -24,8 +24,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     Set<String> categorias = new HashSet<>();
     ArrayList<Producto> productos = new ArrayList();
 
-     static TreeMap<Long, Producto> Product = new TreeMap();
-    private String product;
+    static TreeMap<Long, Producto> Product = new TreeMap();
     DefaultTableModel modelo = new DefaultTableModel() {
         public boolean isCellEditable(int fila, int columna) {
             return false;
@@ -99,6 +98,11 @@ public class VistaGestion extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -310,12 +314,42 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBActualizarActionPerformed
-        txtCodigo.setText("");
-        txtDescripcion.setText("");
-        txtPrecio.setText("");
-        jCRubro.setSelectedItem(0);
-        jSStock.setValue(0);
-        DesactivarCampo();
+        if (ValidarCamposVacios(jDesktopPane1)) {
+            try {
+                long codigoSelect = Long.parseLong(txtCodigo.getText());
+                String descripcion = txtDescripcion.getText();
+                double precio = Double.parseDouble(txtPrecio.getText());
+                System.out.println(precio);
+                String rubro = (String) jCRubro.getSelectedItem();
+                int stock = (Integer) jSStock.getValue();
+                for (long ele : Product.keySet()) {
+                    if (ele == codigoSelect) {
+                        Product.get(ele).actualizar(codigoSelect, descripcion, precio, rubro, stock);
+                        modelo.setRowCount(0);
+                        for (Producto p : Product.values()) {
+                            modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+                        }
+                        txtCodigo.setText("");
+                        txtDescripcion.setText("");
+                        txtPrecio.setText("");
+                        jCRubro.setSelectedItem(0);
+                        jSStock.setValue(0);
+                        return;
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "Codigo no Existente");
+            } catch (NumberFormatException r) {
+                System.out.println("entro");
+                JOptionPane.showMessageDialog(this, "complete los campos", "Error", HEIGHT);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Complete los Campos", "Error", HEIGHT);
+            txtCodigo.setText("");
+            txtDescripcion.setText("");
+            txtPrecio.setText("");
+            jCRubro.setSelectedItem(0);
+            jSStock.setValue(0);
+        }
 
     }//GEN-LAST:event_jBActualizarActionPerformed
 
@@ -325,7 +359,11 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
     private void jBNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBNuevoActionPerformed
         ActivarCampo();
-
+        txtCodigo.setText("");
+        txtDescripcion.setText("");
+        txtPrecio.setText("");
+        jCRubro.setSelectedIndex(-1);
+        jSStock.setValue(0);
     }//GEN-LAST:event_jBNuevoActionPerformed
 
     private void jCRubroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCRubroActionPerformed
@@ -364,12 +402,15 @@ public class VistaGestion extends javax.swing.JInternalFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Complete los Campos", "Error", HEIGHT);
         }
+        DesactivarCampo();
     }//GEN-LAST:event_jBGuardarActionPerformed
 
     private void jBEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBEliminarActionPerformed
         int filaSeleccionada = jTable1.getSelectedRow();  // OBTENGO LA FILA
 
         if (filaSeleccionada != -1) {
+            long codigo = (Long) jTable1.getValueAt(filaSeleccionada, 0);
+            Product.remove(codigo);
             modelo.removeRow(filaSeleccionada);
 
         } else {
@@ -380,6 +421,24 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     private void jCCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCCategoriaActionPerformed
 
     }//GEN-LAST:event_jCCategoriaActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        ActivarCampo();
+        int filaSelecionada = jTable1.getSelectedRow();
+        if (filaSelecionada != -1) {
+            long codigo = (Long) jTable1.getValueAt(filaSelecionada, 0);
+            String descripcion = (String) jTable1.getValueAt(filaSelecionada, 1);
+            double precio = (Double) jTable1.getValueAt(filaSelecionada, 2);
+            String rubro = (String) jTable1.getValueAt(filaSelecionada, 3);
+            int stock = (int) jTable1.getValueAt(filaSelecionada, 4);
+
+            txtCodigo.setText(codigo + "");
+            txtDescripcion.setText(descripcion);
+            txtPrecio.setText(precio + "");
+            jCRubro.setSelectedItem(rubro);
+            jSStock.setValue(stock);
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -418,6 +477,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
     }
 
     private void DesactivarCampo() {
+        jCRubro.setSelectedIndex(-1);
         txtPrecio.setEnabled(false);
         txtCodigo.setEnabled(false);
         txtDescripcion.setEnabled(false);
