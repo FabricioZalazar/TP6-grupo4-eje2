@@ -5,6 +5,7 @@
  */
 package Vistas;
 
+import Entidades.Producto;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -44,10 +45,20 @@ public class VistaBuscarRubro extends javax.swing.JInternalFrame {
         jTable1 = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
 
+        setClosable(true);
+
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel1.setText("Lista por Rubro");
 
         jLabel2.setText("Rubro");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Comestible", "Perfumeria", "Limpieza" }));
+        jComboBox1.setSelectedIndex(-1);
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -123,6 +134,17 @@ public class VistaBuscarRubro extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        String eleSelect = (String) jComboBox1.getSelectedItem();
+        modelo.setRowCount(0);
+        for (Object object : VistaGestion.Product.values()) {
+            Producto p = (Producto) object;
+            if (p.getRubro().equalsIgnoreCase(eleSelect)) {
+                modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+
+            }
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> jComboBox1;

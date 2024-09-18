@@ -5,10 +5,6 @@
 package Vistas;
 
 import Entidades.Producto;
-import static java.lang.Integer.parseInt;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.TreeMap;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
@@ -21,9 +17,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class VistaGestion extends javax.swing.JInternalFrame {
 
-    Set<String> categorias = new HashSet<>();
-    ArrayList<Producto> productos = new ArrayList();
-
     static TreeMap<Long, Producto> Product = new TreeMap();
     DefaultTableModel modelo = new DefaultTableModel() {
         public boolean isCellEditable(int fila, int columna) {
@@ -35,8 +28,8 @@ public class VistaGestion extends javax.swing.JInternalFrame {
      * Creates new form VistaGestion
      */
     public VistaGestion() {
-
         initComponents();
+        llenadoProductos();
         ArmarCabecera();
         DesactivarCampo();
     }
@@ -81,6 +74,13 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
         jLCategoria.setText("Filtrar por Categoria:");
 
+        jCCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Comestible", "Perfumeria", "Limpieza" }));
+        jCCategoria.setSelectedIndex(-1);
+        jCCategoria.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jCCategoriaItemStateChanged(evt);
+            }
+        });
         jCCategoria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCCategoriaActionPerformed(evt);
@@ -118,6 +118,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
         jLStock.setText("Stock:");
 
         jCRubro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Comestible", "Limpieza", "Perfumeria" }));
+        jCRubro.setSelectedIndex(-1);
         jCRubro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCRubroActionPerformed(evt);
@@ -319,27 +320,28 @@ public class VistaGestion extends javax.swing.JInternalFrame {
                 long codigoSelect = Long.parseLong(txtCodigo.getText());
                 String descripcion = txtDescripcion.getText();
                 double precio = Double.parseDouble(txtPrecio.getText());
-                System.out.println(precio);
                 String rubro = (String) jCRubro.getSelectedItem();
                 int stock = (Integer) jSStock.getValue();
                 for (long ele : Product.keySet()) {
                     if (ele == codigoSelect) {
                         Product.get(ele).actualizar(codigoSelect, descripcion, precio, rubro, stock);
+                        jCCategoria.setSelectedItem(rubro);
                         modelo.setRowCount(0);
                         for (Producto p : Product.values()) {
-                            modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+                            if (p.getRubro().equalsIgnoreCase(rubro)) {
+                                modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+                            }
                         }
                         txtCodigo.setText("");
                         txtDescripcion.setText("");
                         txtPrecio.setText("");
-                        jCRubro.setSelectedItem(0);
+                        jCRubro.setSelectedIndex(-1);
                         jSStock.setValue(0);
                         return;
                     }
                 }
                 JOptionPane.showMessageDialog(this, "Codigo no Existente");
             } catch (NumberFormatException r) {
-                System.out.println("entro");
                 JOptionPane.showMessageDialog(this, "complete los campos", "Error", HEIGHT);
             }
         } else {
@@ -347,7 +349,7 @@ public class VistaGestion extends javax.swing.JInternalFrame {
             txtCodigo.setText("");
             txtDescripcion.setText("");
             txtPrecio.setText("");
-            jCRubro.setSelectedItem(0);
+            jCRubro.setSelectedIndex(-1);
             jSStock.setValue(0);
         }
 
@@ -372,36 +374,25 @@ public class VistaGestion extends javax.swing.JInternalFrame {
 
     private void jBGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBGuardarActionPerformed
         if (ValidarCamposVacios(jDesktopPane1)) {
-            try {
 
-                long codigo = Long.parseLong(txtCodigo.getText());
-                String descripcion = txtDescripcion.getText();
-                int precio = Integer.parseInt(txtPrecio.getText());
-                String rubro = (String) jCRubro.getSelectedItem();
-                int stock = (Integer) jSStock.getValue();
+            long codigo = Long.parseLong(txtCodigo.getText());
+            String descripcion = txtDescripcion.getText();
+            double precio = Double.parseDouble(txtPrecio.getText());
+            String rubro = (String) jCRubro.getSelectedItem();
+            int stock = (Integer) jSStock.getValue();
 
-                if (Product.containsKey(codigo)) {
-                    JOptionPane.showMessageDialog(this, "El código de producto ya existe. Por favor, use un código diferente.");
-
-                    return;
-                }
-                Producto producto = new Producto(codigo, descripcion, precio, rubro, stock);
-                Product.putIfAbsent(codigo, producto);
-
-                LlenarCombo();
-                String categoriaSeleccionada = (String) jCCategoria.getSelectedItem();
-
-                modelo.setRowCount(0);
-                for (Producto p : Product.values()) {
-                    modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
-                }
-
-            } catch (NumberFormatException r) {
-                JOptionPane.showMessageDialog(this, "complete los campos", "Error", HEIGHT);
+            if (Product.containsKey(codigo)) {
+                JOptionPane.showMessageDialog(this, "El código de producto ya existe. Por favor, use un código diferente.");
+                return;
             }
+            Producto producto = new Producto(codigo, descripcion, precio, rubro, stock);
+            Product.putIfAbsent(codigo, producto);
+
+            jCCategoria.setSelectedItem(rubro);
         } else {
             JOptionPane.showMessageDialog(this, "Complete los Campos", "Error", HEIGHT);
         }
+
         DesactivarCampo();
     }//GEN-LAST:event_jBGuardarActionPerformed
 
@@ -412,7 +403,11 @@ public class VistaGestion extends javax.swing.JInternalFrame {
             long codigo = (Long) jTable1.getValueAt(filaSeleccionada, 0);
             Product.remove(codigo);
             modelo.removeRow(filaSeleccionada);
-
+            txtCodigo.setText("");
+            txtDescripcion.setText("");
+            txtPrecio.setText("");
+            jCRubro.setSelectedIndex(-1);
+            jSStock.setValue(0);
         } else {
             JOptionPane.showMessageDialog(this, "No se seleccionó ninguna fila.");
         }
@@ -439,6 +434,17 @@ public class VistaGestion extends javax.swing.JInternalFrame {
             jSStock.setValue(stock);
         }
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jCCategoriaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jCCategoriaItemStateChanged
+        String categoriaSeleccionada = (String) jCCategoria.getSelectedItem();
+
+        modelo.setRowCount(0);
+        for (Producto p : Product.values()) {
+            if (p.getRubro().equals(categoriaSeleccionada)) {
+                modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+            }
+        }
+    }//GEN-LAST:event_jCCategoriaItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -507,23 +513,27 @@ public class VistaGestion extends javax.swing.JInternalFrame {
         return bandera;
     }
 
-    public void LlenarCombo() {
-        jCCategoria.removeAllItems();
+    public void llenadoProductos() {
 
-        for (Producto producto : Product.values()) {
-            categorias.add(producto.getRubro());
-        }
-        for (String categoria : categorias) {
-            jCCategoria.addItem(categoria);
-        }
+        Producto p1 = new Producto(100, "Pan", 1400, "Comestible", 40);
+        Producto p2 = new Producto(101, "Pan Lactal", 1600, "Comestible", 30);
+        Producto p3 = new Producto(102, "Tortita", 800, "Comestible", 20);
+        Producto p4 = new Producto(103, "Avon", 2500, "Perfumeria", 10);
+        Producto p5 = new Producto(104, "Natura", 1100, "Perfumeria", 50);
+        Producto p6 = new Producto(105, "Lavandina", 600, "Limpieza", 99);
+        Producto p7 = new Producto(106, "Jabon", 300, "Limpieza", 120);
+        Producto p8 = new Producto(107, "Desodorante", 800, "Limpieza", 30);
+        Producto p9 = new Producto(108, "Ciff", 1400, "Limpieza", 40);
+        Producto p10 = new Producto(109, "Hamburguesa", 10000, "Comestible", 400);
+        Product.putIfAbsent((long) 100, p1);
+        Product.putIfAbsent((long) 101, p2);
+        Product.putIfAbsent((long) 102, p3);
+        Product.putIfAbsent((long) 103, p4);
+        Product.putIfAbsent((long) 104, p5);
+        Product.putIfAbsent((long) 105, p6);
+        Product.putIfAbsent((long) 106, p7);
+        Product.putIfAbsent((long) 107, p8);
+        Product.putIfAbsent((long) 108, p9);
+        Product.putIfAbsent((long) 109, p10);
     }
-
-    private void actualizarCategorias() {
-
-        Set<String> categorias = new HashSet<>();
-        for (Producto producto : Product.values()) {
-            categorias.add(producto.getRubro());
-        }
-    }
-
 }

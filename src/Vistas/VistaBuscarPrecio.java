@@ -1,7 +1,10 @@
 package Vistas;
 
 import Entidades.Producto;
+import static java.lang.Double.parseDouble;
+import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -42,13 +45,18 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
         jTPrecioMax = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTfiltroPrecio = new javax.swing.JTable();
-        jTPrecioMIn = new javax.swing.JTextField();
+        jTPrecioMin = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
+        setClosable(true);
+
         jTPrecioMax.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTPrecioMaxKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTPrecioMaxKeyTyped(evt);
             }
@@ -67,14 +75,9 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
         ));
         jScrollPane1.setViewportView(jTfiltroPrecio);
 
-        jTPrecioMIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTPrecioMInActionPerformed(evt);
-            }
-        });
-        jTPrecioMIn.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTPrecioMInKeyTyped(evt);
+        jTPrecioMin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTPrecioMinKeyReleased(evt);
             }
         });
 
@@ -86,7 +89,7 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
 
         jDesktopPane1.setLayer(jTPrecioMax, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jDesktopPane1.setLayer(jTPrecioMIn, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(jTPrecioMin, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -105,7 +108,7 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
                         .addGap(13, 13, 13)
                         .addComponent(jLabel1)
                         .addGap(31, 31, 31)
-                        .addComponent(jTPrecioMIn, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTPrecioMin, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(21, 21, 21)
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
@@ -121,7 +124,7 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
                     .addGroup(jDesktopPane1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTPrecioMIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTPrecioMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTPrecioMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)))
@@ -158,18 +161,54 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTPrecioMInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTPrecioMInActionPerformed
-
-
-    }//GEN-LAST:event_jTPrecioMInActionPerformed
-
-    private void jTPrecioMInKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTPrecioMInKeyTyped
-       
-    }//GEN-LAST:event_jTPrecioMInKeyTyped
-
     private void jTPrecioMaxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTPrecioMaxKeyTyped
-      
+
     }//GEN-LAST:event_jTPrecioMaxKeyTyped
+
+    private void jTPrecioMaxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTPrecioMaxKeyReleased
+
+        String precioMin = jTPrecioMin.getText().trim();
+        String precioMax = jTPrecioMax.getText().trim();
+        if (!precioMax.isEmpty()) {
+            double min = parseDouble(precioMin);
+            double max = parseDouble(precioMax);
+
+            if (!Double.isNaN(min) && !Double.isNaN(max)) {
+                borrarFilas();
+                for (Object object : VistaGestion.Product.values()) {
+                    Producto p = (Producto) object;
+                    if (p.getPrecio() >= min && p.getPrecio() <= max) {
+                        modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+
+                    }
+                }
+            }
+        }
+
+    }//GEN-LAST:event_jTPrecioMaxKeyReleased
+
+    private void jTPrecioMinKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTPrecioMinKeyReleased
+
+        String precioMin = jTPrecioMin.getText().trim();
+        String precioMax = jTPrecioMax.getText().trim();
+        borrarFilas();
+        if (!precioMax.isEmpty()) {
+            double min = parseDouble(precioMin);
+            double max = parseDouble(precioMax);
+
+            if (!Double.isNaN(min) && !Double.isNaN(max)) {
+                for (Object object : VistaGestion.Product.values()) {
+                    Producto p = (Producto) object;
+                    if (p.getPrecio() >= min && p.getPrecio() <= max) {
+                        modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+
+                    }
+                }
+            }
+        }
+
+
+    }//GEN-LAST:event_jTPrecioMinKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -179,10 +218,18 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTPrecioMIn;
     private javax.swing.JTextField jTPrecioMax;
+    private javax.swing.JTextField jTPrecioMin;
     private javax.swing.JTable jTfiltroPrecio;
     // End of variables declaration//GEN-END:variables
+
+    public void borrarFilas() {
+        int fila = jTfiltroPrecio.getRowCount() - 1;
+        for (int i = fila; i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
+
     private void ArmarCabecera() {
         modelo.addColumn("Codigo");
         modelo.addColumn("Descripcion");
@@ -190,11 +237,26 @@ public class VistaBuscarPrecio extends javax.swing.JInternalFrame {
         modelo.addColumn("Categoria");
         modelo.addColumn("Stock");
         jTfiltroPrecio.setModel(modelo);
+        modelo.setRowCount(0);
+        for (Object object : VistaGestion.Product.values()) {
+            Producto p = (Producto) object;
+            modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
+
+        }
     }
 
-    
+    public boolean ValidarCamposVacios(JDesktopPane jDesktopPane1) {
+        boolean bandera = true;
+        for (int i = 0; i < jDesktopPane1.getComponents().length; i++) {
+            if (!bandera) {
+                break;
+            }
+            if (jDesktopPane1.getComponents()[i] instanceof JTextField) {
+                bandera = !((JTextField) jDesktopPane1.getComponents()[i]).getText().equals("") ? true : false;
+                jDesktopPane1.getComponents()[i].requestFocus();
+            }
+        }
+        return bandera;
     }
 
-
-
-        
+}

@@ -51,17 +51,9 @@ public class VistaBuscarPorNombre extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Ingrese Descripcion:");
 
-        txtNombre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNombreActionPerformed(evt);
-            }
-        });
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtNombreKeyTyped(evt);
             }
         });
 
@@ -139,33 +131,16 @@ public class VistaBuscarPorNombre extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
-        borrarFilas();
-        String nombre = txtNombre.getText();
-
-        for (Object object : VistaGestion.Product.values()) {
-            Producto p = (Producto) object;
-            if (p.equals(nombre)) {
-                modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
-
-            }
-        }
-
-    }//GEN-LAST:event_txtNombreKeyTyped
-
     private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
-         for (Object object : VistaGestion.Product.values()) {
+            borrarFilas(); 
+        for (Object object : VistaGestion.Product.values()) {
               Producto p = (Producto) object;
-               if (p.getDescripcion().startsWith(txtNombre.getText())) {
+               if (p.getDescripcion().toLowerCase().startsWith(txtNombre.getText().toLowerCase())) {    
                 modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
 
             }
          }
     }//GEN-LAST:event_txtNombreKeyReleased
-
-    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -184,7 +159,13 @@ public class VistaBuscarPorNombre extends javax.swing.JInternalFrame {
         modelo.addColumn("Categoria");
         modelo.addColumn("Stock");
         jTable1.setModel(modelo);
+        modelo.setRowCount(0);
+        for (Object object : VistaGestion.Product.values()) {
+              Producto p = (Producto) object;
+                modelo.addRow(new Object[]{p.getCodigo(), p.getDescripcion(), p.getPrecio(), p.getRubro(), p.getStock()});
 
+            }
+         
     }
     
     public void borrarFilas(){

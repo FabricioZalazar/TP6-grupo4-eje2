@@ -133,10 +133,16 @@
         <Component class="javax.swing.JComboBox" name="jCCategoria">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
+              <StringArray count="3">
+                <StringItem index="0" value="Comestible"/>
+                <StringItem index="1" value="Perfumeria"/>
+                <StringItem index="2" value="Limpieza"/>
+              </StringArray>
             </Property>
+            <Property name="selectedIndex" type="int" value="-1"/>
           </Properties>
           <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jCCategoriaItemStateChanged"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCCategoriaActionPerformed"/>
           </Events>
           <AuxValues>
@@ -321,6 +327,7 @@
                     <StringItem index="2" value="Perfumeria"/>
                   </StringArray>
                 </Property>
+                <Property name="selectedIndex" type="int" value="-1"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCRubroActionPerformed"/>
