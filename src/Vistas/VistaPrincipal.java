@@ -90,6 +90,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jmConsultas.add(mitConsultaPrecio);
 
         mitConsultaRubro.setText("Consulta por Rubro");
+        mitConsultaRubro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mitConsultaRubroActionPerformed(evt);
+            }
+        });
         jmConsultas.add(mitConsultaRubro);
 
         jMenuBar1.add(jmConsultas);
@@ -122,7 +127,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_mitConsultaNombreActionPerformed
 
     private void mitConsultaPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaPrecioActionPerformed
-        // TODO add your handling code here:
+        escritorio.repaint();
+        VistaBuscarPrecio a1 = new VistaBuscarPrecio();
+        a1.setVisible(true);
+        escritorio.add(a1);
+        escritorio.moveToFront(a1);
     }//GEN-LAST:event_mitConsultaPrecioActionPerformed
 
     private void jmAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmAdminMouseClicked
@@ -132,6 +141,14 @@ public class VistaPrincipal extends javax.swing.JFrame {
         escritorio.add(a1);
         escritorio.moveToFront(a1);
     }//GEN-LAST:event_jmAdminMouseClicked
+
+    private void mitConsultaRubroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitConsultaRubroActionPerformed
+        escritorio.repaint();
+       VistaBuscarRubro a1 = new VistaBuscarRubro();
+        a1.setVisible(true);
+        escritorio.add(a1);
+        escritorio.moveToFront(a1);
+    }//GEN-LAST:event_mitConsultaRubroActionPerformed
 
     /**
      * @param args the command line arguments

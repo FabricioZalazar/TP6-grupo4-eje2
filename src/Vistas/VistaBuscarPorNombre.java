@@ -51,6 +51,11 @@ public class VistaBuscarPorNombre extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Ingrese Descripcion:");
 
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreActionPerformed(evt);
+            }
+        });
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
@@ -157,6 +162,10 @@ public class VistaBuscarPorNombre extends javax.swing.JInternalFrame {
             }
          }
     }//GEN-LAST:event_txtNombreKeyReleased
+
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
